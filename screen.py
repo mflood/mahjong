@@ -53,7 +53,6 @@ def main(stdscr):
     print_tiles(discard_window, discards.tiles, discards.last_tile)
     print_tiles(hand_window, hand.tiles, hand.last_tile)
 
-    dragons = [Suit.GREEN_DRAGON, Suit.WHITE_DRAGON, Suit.RED_DRAGON]
     num_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
     winds = [Suit.NORTH_WIND, Suit.SOUTH_WIND, Suit.EAST_WIND, Suit.WEST_WIND]
     last_k = None
@@ -146,16 +145,16 @@ def main(stdscr):
 
         elif k == 'd':
             # toggle dragon
-            if last_k != 'd':
-                current_index = 0
+            dragons = [Suit.GREEN_DRAGON, Suit.WHITE_DRAGON, Suit.RED_DRAGON]
+            if tile.suit in dragons:
+                location = dragons.index(tile.suit)
+                location += 1
+                location %= len(dragons)
             else:
-                current_index += 1
-            idx = current_index % 3
-            suit = dragons[idx]
-            tile = Tile(suit, None)
-            if action_object:
-                action_object.tile = tile
-            last_k = 'd'
+                location = 0
+            tile = Tile(dragons[location])
+            action_object.tile = tile
+
         elif k == 'w':
             if last_k != 'w':
                 current_index = 0
