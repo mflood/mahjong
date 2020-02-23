@@ -12,15 +12,29 @@ class Hand():
 
     def __str__(self):
         normal_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
-        normals = list(filter(lambda x: x.suit in normal_suits, self.tiles))
-        honors = list(filter(lambda x: x.suit != Suit.FLOWER and x.suit not in normal_suits, self.tiles))
-        flowers = list(filter(lambda x: x.suit == Suit.FLOWER, self.tiles))
+        normals = self.get_normals()
+        honors = self.get_honors()
+        flowers = self.get_flowers()
 
         n = "{}".format(" ".join([str(x) for x in normals]))
         h = "{}".format(" ".join([str(x) for x in honors]))
         f = "{}".format(" ".join([str(x) for x in flowers]))
 
         return "{}\n{}\n{}".format(n, h, f)
+
+    def get_normals(self):
+        normal_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
+        normals = list(filter(lambda x: x.suit in normal_suits, self.tiles))
+        return normals
+        
+    def get_honors(self):
+        normal_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
+        honors = list(filter(lambda x: x.suit != Suit.FLOWER and x.suit not in normal_suits, self.tiles))
+        return honors
+
+    def get_flowers(self):
+        flowers = list(filter(lambda x: x.suit == Suit.FLOWER, self.tiles))
+        return flowers
 
     def get_state(self):
         return (copy.copy(self.tiles), self.last_tile)

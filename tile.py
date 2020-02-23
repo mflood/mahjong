@@ -24,18 +24,18 @@ class Tile():
             return "Ss)"
 
         if self.suit == Suit.GREEN_DRAGON:
-            return "-Gd->"
-        if self.suit == Suit.RED_DRAGON:
-            return "-Rd->"
+            return "-G->"
+        if self.suit ==Suit.RED_DRAGON:
+            return "-R->"
         if self.suit == Suit.WHITE_DRAGON:
-            return "-Wd->"
+            return "-W->"
 
         if self.suit == Suit.BAM:
-            return "!{}!".format(self.number)
+            return "!{}".format(self.number)
         if self.suit == Suit.CRAK:
-            return "~{}~".format(self.number)
+            return "#{}".format(self.number)
         if self.suit == Suit.DOT:
-            return "o{}o".format(self.number)
+            return "o{}".format(self.number)
 
         return "??"
 

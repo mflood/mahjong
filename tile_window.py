@@ -7,28 +7,18 @@ def print_hand_block(window, hand):
 
     window.clear() 
 
-    current_row = 0
-    for suit in [
-        Suit.BAM,
-        Suit.CRAK,
-        Suit.DOT,
-        Suit.GREEN_DRAGON,
-        Suit.RED_DRAGON,
-        Suit.WHITE_DRAGON,
-        Suit.NORTH_WIND,
-        Suit.WEST_WIND,
-        Suit.SOUTH_WIND,
-        Suit.EAST_WIND,
-        Suit.FLOWER
-    ]:
-        tile_list = []
-        for t in hand.tiles:
-            if t.suit == suit:
-                tile_list.append(str(t))
+    normal_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
+    normals = hand.get_normals()
+    honors = hand.get_honors()
+    flowers = hand.get_flowers()
 
-        if tile_list:
-            window.addstr(current_row, 0, " ".join(tile_list))
-            current_row += 1
+    n = " ".join([str(x) for x in normals])
+    h = " ".join([str(x) for x in honors])
+    f = " ".join([str(x) for x in flowers])
+
+    window.addstr(0, 0, n)
+    window.addstr(1, 0, h)
+    window.addstr(2, 0, f)
 
     window.refresh()
 
