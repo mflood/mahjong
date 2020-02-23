@@ -177,18 +177,4 @@ def main(stdscr):
                 pass
                     
 
-        #a = stdscr.getch()
-#        curses.echo()
-        # get string needs a return
-        #s = stdscr.getstr(0,0, 10)
-        
-        #stdscr.addstr(i, 0, 'Got string {}.format(s)'.format(s))
-        #a = stdscr.getch()
-        #stdscr.addstr(20,5, "Got Char {} RED ALERT!".format(a), curses.color_pair(1))
-        #win.addstr(0,0, "Got Char {} wBVLUEED ALERT!".format(a), curses.color_pair(2))
-
-#        win.refresh()
- #       stdscr.refresh()
-        #stdscr.getkey()
-
 wrapper(main)
