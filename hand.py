@@ -1,3 +1,4 @@
+import copy
 
 class Hand():
 
@@ -11,6 +12,13 @@ class Hand():
     def __str__(self):
         top = "{}".format(" ".join([str(x) for x in self.tiles]))
         return "{}\n{}".format(top)
+
+    def get_state(self):
+        return (copy.copy(self.tiles), self.last_tile)
+
+    def set_state(self, state):
+        self.tiles = state[0]
+        self.last_tile = state[1]
 
     def add(self, tile):
         self.tiles.append(tile)

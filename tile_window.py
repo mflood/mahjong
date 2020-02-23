@@ -5,6 +5,8 @@ import curses
 
 def print_tiles(window, tiles, last_tile):
 
+    window.clear()
+
     if not last_tile:
         last_tile = Tile(Suit.NONE)
 

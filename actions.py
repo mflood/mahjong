@@ -6,6 +6,37 @@ class GameAction():
     pass
 
 
+class HandToDiscardAction(GameAction):
+
+    def __init__(self, hand, discards, tile):
+        self.hand = hand
+        self.discards = discards
+        self.tile = tile
+
+        # for undo state
+        self._hand_state = None
+        self._discards_state = None
+
+    def __str__(self):
+        return "Discard from hand: {}".format(self.tile)
+
+    def execute(self):
+
+        self._hand_state = self.hand.get_state()
+        self._discards_state = self.discards.get_state()
+
+        if self.hand.pull(self.tile):
+            self.discards.add(self.tile)
+
+    def undo(self):
+        self.hand.set_state(self._hand_state)
+        self.discards.set_state(self._discards_state)
+
+    def clone(self):
+        return HandToDiscardAction(hand=self.hand,
+                                   discards=self.discards,
+                                   tile=self.tile)
+
 class WallToDiscardAction(GameAction):
 
     def __init__(self, wall, discards, tile):
