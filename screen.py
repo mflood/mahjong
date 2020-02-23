@@ -10,6 +10,7 @@ from suit import Suit
 from discards import Discards
 
 from tile_window import print_tiles
+from tile_window import print_hand_block
 from actions import WallToDiscardAction
 from actions import WallToHandAction
 from actions import HandToDiscardAction
@@ -46,6 +47,8 @@ def main(stdscr):
     begin_y = 5
     begin_x = 5
 
+    hand_block_window = curses.newwin(13, 140, begin_y + 20, begin_x + 45)
+
     wall_window = curses.newwin(height, width, begin_y, begin_x)
     discard_window = curses.newwin(height, width, begin_y, begin_x + 45)
     hand_window = curses.newwin(height, width, begin_y + 20, begin_x)
@@ -54,6 +57,8 @@ def main(stdscr):
     print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
     print_tiles(discard_window, discards.tiles, discards.last_tile)
     print_tiles(hand_window, hand.tiles, hand.last_tile)
+    print_hand_block(hand_block_window, hand)
+
 
     current_index = 0
     tile = Tile(Suit.BAM, 1)
@@ -100,6 +105,7 @@ def main(stdscr):
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
+            print_hand_block(hand_block_window, hand)
 
         elif k == "u":
             try:
@@ -112,6 +118,7 @@ def main(stdscr):
                 print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
                 print_tiles(discard_window, discards.tiles, discards.last_tile)
                 print_tiles(hand_window, hand.tiles, hand.last_tile)
+                print_hand_block(hand_block_window, hand)
             except IndexError:
                 pass
         elif k == ".":
@@ -141,6 +148,7 @@ def main(stdscr):
                 print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
                 print_tiles(discard_window, discards.tiles, discards.last_tile)
                 print_tiles(hand_window, hand.tiles, hand.last_tile)
+                print_hand_block(hand_block_window, hand)
 
         elif k == " ":
             # pull random tile from wall
@@ -151,6 +159,7 @@ def main(stdscr):
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
+            print_hand_block(hand_block_window, hand)
 
         elif k == 'd':
             # toggle dragon

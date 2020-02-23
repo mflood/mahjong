@@ -1,3 +1,4 @@
+from suit import Suit
 
 class Tile():
 
@@ -9,12 +10,34 @@ class Tile():
         return "Tile({}, {})".format(self.suit, self.number)
 
     def __str__(self):
-        suit = str(self.suit).replace("Suit.", "")
 
-        if self.number:
-            return "|{} {}|".format(suit, self.number)
-        else:
-            return "|{}|".format(suit)
+        if self.suit == Suit.FLOWER:
+            return "{*}"
+
+        if self.suit == Suit.EAST_WIND:
+            return "Ee)"
+        if self.suit == Suit.WEST_WIND:
+            return "Ww)"
+        if self.suit == Suit.NORTH_WIND:
+            return "Nn)"
+        if self.suit == Suit.SOUTH_WIND:
+            return "Ss)"
+
+        if self.suit == Suit.GREEN_DRAGON:
+            return "-Gd->"
+        if self.suit == Suit.RED_DRAGON:
+            return "-Rd->"
+        if self.suit == Suit.WHITE_DRAGON:
+            return "-Wd->"
+
+        if self.suit == Suit.BAM:
+            return "!{}!".format(self.number)
+        if self.suit == Suit.CRAK:
+            return "~{}~".format(self.number)
+        if self.suit == Suit.DOT:
+            return "o{}o".format(self.number)
+
+        return "??"
 
     def __eq__(self, other):
         return ((int(self.suit), self.number) == (int(other.suit), other.number))

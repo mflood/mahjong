@@ -3,6 +3,35 @@ from tile import Tile
 import curses
 
 
+def print_hand_block(window, hand):
+
+    window.clear() 
+
+    current_row = 0
+    for suit in [
+        Suit.BAM,
+        Suit.CRAK,
+        Suit.DOT,
+        Suit.GREEN_DRAGON,
+        Suit.RED_DRAGON,
+        Suit.WHITE_DRAGON,
+        Suit.NORTH_WIND,
+        Suit.WEST_WIND,
+        Suit.SOUTH_WIND,
+        Suit.EAST_WIND,
+        Suit.FLOWER
+    ]:
+        tile_list = []
+        for t in hand.tiles:
+            if t.suit == suit:
+                tile_list.append(str(t))
+
+        if tile_list:
+            window.addstr(current_row, 0, " ".join(tile_list))
+            current_row += 1
+
+    window.refresh()
+
 def print_tiles(window, tiles, last_tile):
 
     window.clear()

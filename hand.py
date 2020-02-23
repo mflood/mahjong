@@ -1,4 +1,5 @@
 import copy
+from suit import Suit
 
 class Hand():
 
@@ -10,8 +11,16 @@ class Hand():
         return "Hand REPR"
 
     def __str__(self):
-        top = "{}".format(" ".join([str(x) for x in self.tiles]))
-        return "{}\n{}".format(top)
+        normal_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
+        normals = list(filter(lambda x: x.suit in normal_suits, self.tiles))
+        honors = list(filter(lambda x: x.suit != Suit.FLOWER and x.suit not in normal_suits, self.tiles))
+        flowers = list(filter(lambda x: x.suit == Suit.FLOWER, self.tiles))
+
+        n = "{}".format(" ".join([str(x) for x in normals]))
+        h = "{}".format(" ".join([str(x) for x in honors]))
+        f = "{}".format(" ".join([str(x) for x in flowers]))
+
+        return "{}\n{}\n{}".format(n, h, f)
 
     def get_state(self):
         return (copy.copy(self.tiles), self.last_tile)
@@ -22,6 +31,7 @@ class Hand():
 
     def add(self, tile):
         self.tiles.append(tile)
+        self.tiles.sort()
         self.last_tile = tile 
 
     def pull(self, tile):
