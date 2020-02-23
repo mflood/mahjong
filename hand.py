@@ -156,11 +156,7 @@ class Hand():
                     sets.extend(new_sets)
                     # print("Now set is {}".format(str(sets)))
 
-                if len(sets) >= 3 and pair:
-                    print("valid: {} {}".format(sets, pair))
-                    for item in sets:
-                        print("SET: {}".format(" ".join([str(x) for x in item])))
-                    print("PAIR: {}".format(" ".join([str(x) for x in pair])))
+                if len(sets) > 3 and pair:
                     return (sets, pair)
 
         return False
@@ -236,3 +232,8 @@ if __name__ == "__main__":
         if is_m:
             print("Mahjong!!!")
             print("Hand is %s" % hand)
+            sets, pair = is_m
+            print("valid: {} {}".format(sets, pair))
+            for item in sets:
+                print("SET: {}".format(" ".join([str(x) for x in item])))
+            print("PAIR: {}".format(" ".join([str(x) for x in pair])))
