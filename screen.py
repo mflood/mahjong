@@ -47,11 +47,11 @@ def main(stdscr):
     begin_y = 5
     begin_x = 5
 
-    hand_block_window = curses.newwin(13, 140, begin_y + 20, begin_x + 45)
+    hand_block_window = curses.newwin(13, 140, begin_y + 18, begin_x + 45)
 
     wall_window = curses.newwin(height, width, begin_y, begin_x)
     discard_window = curses.newwin(height, width, begin_y, begin_x + 45)
-    hand_window = curses.newwin(height, width, begin_y + 20, begin_x)
+    hand_window = curses.newwin(height, width, begin_y + 18, begin_x)
     command_window = curses.newwin(3, 100, 2, 2)
 
     print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))

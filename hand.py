@@ -22,6 +22,55 @@ class Hand():
 
         return "{}\n{}\n{}".format(n, h, f)
 
+
+    def get_tiles_of_suit(self, suit):
+        tiles = []
+        for t in self.tiles:
+            if t.suit == suit:
+                tiles.append(t)
+        return tiles
+
+    def is_mahjong(self):
+        
+        pair = None
+        sets = []
+        for suit in [
+            Suit.GREEN_DRAGON,
+            Suit.WHITE_DRAGON,
+            Suit.RED_DRAGON,
+            Suit.EAST_WIND,
+            Suit.WEST_WIND,
+            Suit.NORTH_WIND,
+            Suit.SOUTH_WIND,
+        ]:
+            tiles = self.get_tiles_of_suit(suit)
+            if not tiles:
+                continue
+
+            if len(tiles) == 2:
+                if pair:
+                    return False
+                pair = tiles
+            elif len(tiles) == 3:
+                sets.append(tiles)
+            else:
+                # length is 1 or 4
+                return False
+
+            if len(sets) == 4 and pair:
+                return True
+
+        print("Fell through")
+        return False
+
+
+    def hand_size(self):
+        """
+             return number of tiles without flowers
+        """
+        non_flowers = list(filter(lambda x: x.suit != Suit.FLOWER, self.tiles))
+        return len(non_flowers)
+
     def get_normals(self):
         normal_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
         normals = list(filter(lambda x: x.suit in normal_suits, self.tiles))
@@ -64,3 +113,5 @@ class Hand():
             self.last_tile = None 
         return discarded
 
+
+    

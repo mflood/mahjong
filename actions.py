@@ -30,13 +30,13 @@ class PungAction(GameAction):
 
         last_tile = self.discards.last_tile
         if self.mode == 0:
-            return "Create pung from discard (other player): {}".format(last_tile)
+            return "Create pung from discard (other player): {}".format(last_tile.long_name())
         elif self.mode == 1:
-            return "Create kong from discard (other player): {}".format(last_tile)
+            return "Create kong from discard (other player): {}".format(last_tile.long_name())
         elif self.mode == 2:
-            return "Create pung from discard (my hand): {}".format(last_tile)
+            return "Create pung from discard (my hand): {}".format(last_tile.long_name())
         elif self.mode == 3:
-            return "Create kong from discard (my hand): {}".format(last_tile)
+            return "Create kong from discard (my hand): {}".format(last_tile.long_name())
         else:
             return "Cannot pung / kong"
 
@@ -145,7 +145,7 @@ class HandLastTileToDiscardAction(GameAction):
         self._discards_state = None
 
     def __str__(self):
-        return "Discard from hand: {}".format(self.tile)
+        return "Discard from hand: {}".format(self.tile.long_name())
 
     def execute(self):
 
@@ -176,7 +176,7 @@ class HandToDiscardAction(GameAction):
         self._discards_state = None
 
     def __str__(self):
-        return "Discard from hand: {}".format(self.tile)
+        return "Discard from hand: {}".format(self.tile.long_name())
 
     def execute(self):
 
@@ -206,16 +206,20 @@ class RandomFromWallToHandAction(GameAction):
         self._hands_state = None
 
     def __str__(self):
-        return "Random Wall to Hand: {}".format(self.tile)
+        return "Random Wall to Hand: {}".format(self.tile.long_name())
 
     def execute(self):
 
         self._wall_state = self.wall.get_state()
         self._hands_state = self.hand.get_state()
 
-        tile = self.wall.draw()
-        if tile:
-            self.hand.add(tile)
+
+        while(self.hand.hand_size() < 14): 
+            tile = self.wall.draw()
+            if tile:
+                self.hand.add(tile)
+            else:
+                break
 
     def undo(self):
         self.wall.set_state(self._wall_state)
@@ -237,7 +241,7 @@ class WallToHandAction(GameAction):
         self._hands_state = None
 
     def __str__(self):
-        return "Wall to Hand: {}".format(self.tile)
+        return "Wall to Hand: {}".format(self.tile.long_name())
 
     def execute(self):
 
@@ -268,7 +272,7 @@ class WallToDiscardAction(GameAction):
         self._discards_state = None
 
     def __str__(self):
-        return "Discard from wall: {}".format(self.tile)
+        return "Discard from wall: {}".format(self.tile.long_name())
 
     def execute(self):
 

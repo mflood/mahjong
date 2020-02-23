@@ -20,6 +20,12 @@ def print_hand_block(window, hand):
     window.addstr(1, 0, h)
     window.addstr(2, 0, f)
 
+    if hand.is_mahjong():
+        window.addstr(3, 0, "MAHJONG")
+    else:
+        window.addstr(3, 0, "NOT MAHJONG")
+
+
     window.refresh()
 
 def print_tiles(window, tiles, last_tile):

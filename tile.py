@@ -9,6 +9,38 @@ class Tile():
     def __repr__(self):
         return "Tile({}, {})".format(self.suit, self.number)
 
+    def long_name(self):
+
+        if self.suit == Suit.FLOWER:
+            return "FLOWER"
+
+        if self.suit == Suit.EAST_WIND:
+            return "East Wind"
+        if self.suit == Suit.WEST_WIND:
+            return "West Wind"
+        if self.suit == Suit.NORTH_WIND:
+            return "North Wind"
+        if self.suit == Suit.SOUTH_WIND:
+            return "South Wind"
+
+        if self.suit == Suit.GREEN_DRAGON:
+            return "Green Dragon"
+        if self.suit ==Suit.RED_DRAGON:
+            return "Red Dragon"
+        if self.suit == Suit.WHITE_DRAGON:
+            return "White Dragon"
+
+        if self.suit == Suit.BAM:
+            return "{} Bamboos".format(self.number)
+        if self.suit == Suit.CRAK:
+            return "{} Characters".format(self.number)
+        if self.suit == Suit.DOT:
+            return "{} Dots".format(self.number)
+
+        return "??"
+        pass
+        
+
     def __str__(self):
 
         if self.suit == Suit.FLOWER:
