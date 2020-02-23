@@ -19,7 +19,7 @@ class PungAction(GameAction):
         # 1 = kong self
         # 2 = pung self
         # 3 = kong self
-        self.mode = 0
+        self.mode = self.get_modes()[0]
 
         # for undo state
         self._hand_state = None
@@ -35,19 +35,69 @@ class PungAction(GameAction):
         elif self.mode == 2:
             return "Create pung from discard (my hand): {}".format(last_tile)
         elif self.mode == 3:
-            return "Create pung from discard (my hand): {}".format(last_tile)
+            return "Create kong from discard (my hand): {}".format(last_tile)
         else:
             return "Cannot pung / kong"
 
+    def get_modes(self):
+        
+        if not self.discards.last_tile:
+            return [4]
+
+        modes = []
+
+        wall_count = 0
+        for t in self.wall.tiles:
+            if t == self.discards.last_tile:
+                wall_count += 1
+
+        if wall_count > 1:
+            # other pung
+            modes.append(0)
+        if wall_count > 2:
+            # other kong
+            modes.append(1)
+            
+        hand_count = 0
+        for t in self.hand.tiles:
+            if t == self.discards.last_tile:
+                hand_count += 1
+
+        if hand_count > 1:
+            # self pung
+            modes.append(2)
+        if hand_count > 2:
+            # self kong
+            modes.append(3)
+
+        if not modes:
+            modes.append(4)
+
+        return modes
+
+
     def toggle_mode(self):
-        self.mode += 1
-        self.mode %= 4
+        modes = self.get_modes()
+
+        if self.mode in modes:
+
+            location = modes.index(self.mode)
+            location += 1
+            location %= len(modes)
+        else:
+            raise Exception("Mode {} is not in {}".format(self.mode, modes))
+            location = 0
+
+        self.mode = modes[location]
         
     def execute(self):
 
         self._hand_state = self.hand.get_state()
         self._discards_state = self.discards.get_state()
         self._wall_state = self.wall.get_state()
+
+        if self.mode == 4:
+            return
 
         if self.mode in [0, 1]:
             source = self.wall
