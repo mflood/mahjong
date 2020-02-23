@@ -53,22 +53,9 @@ def main(stdscr):
     print_tiles(discard_window, discards.tiles, discards.last_tile)
     print_tiles(hand_window, hand.tiles, hand.last_tile)
 
-    num_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
-    winds = [Suit.NORTH_WIND, Suit.SOUTH_WIND, Suit.EAST_WIND, Suit.WEST_WIND]
-    last_k = None
-    suit = None
     current_index = 0
-    number = None
-    current_suit = None
-    current_number = None
     tile = Tile(Suit.BAM, 1)
-    discard_from = 'wall'
-    actions = {
-            '/': "discard from wall",
-            '.': "move to hand",
-            ',': "discard from hand",
-    }
-    action_key = ','
+
 
     action_object = WallToDiscardAction(wall, discards, tile)
 
@@ -113,13 +100,10 @@ def main(stdscr):
             except IndexError:
                 pass
         elif k == ".":
-            action_key = '/'
             action_object = WallToHandAction(wall, hand, tile)
         elif k == "/":
-            action_key = '/'
             action_object = WallToDiscardAction(wall, discards, tile)
         elif k == ",":
-            action_key = ','
             action_object = HandToDiscardAction(hand, discards, tile)
         elif k == "p":
             # pass
@@ -156,37 +140,39 @@ def main(stdscr):
             action_object.tile = tile
 
         elif k == 'w':
-            if last_k != 'w':
-                current_index = 0
+            # toggle wind
+            winds = [Suit.NORTH_WIND, Suit.SOUTH_WIND, Suit.EAST_WIND, Suit.WEST_WIND]
+            if tile.suit in winds:
+                location = winds.index(tile.suit)
+                location += 1
+                location %= len(winds)
             else:
-                current_index += 1
-            idx = current_index % 4
-            suit = winds[idx]
-            tile = Tile(suit, None)
-            if action_object:
-                action_object.tile = tile
-            last_k = 'w'
+                location = 0
+            tile = Tile(winds[location])
+            action_object.tile = tile
+
         elif k == 'f':
-            if last_k != 'f':
-                tile = Tile(Suit.FLOWER)
-                if action_object:
-                    action_object.tile = tile
-                last_k = 'f'
+            tile = Tile(Suit.FLOWER)
+            action_object.tile = tile
             
         else:
             try:
+                normals = [Suit.BAM, Suit.CRAK, Suit.DOT]
                 number = int(k)
-                if last_k != number:
-                    current_index = 0
-                else:
-                    current_index += 1
-                last_k = number
+                if number < 1 or number > 9:
+                    continue
+                location = 0
+                if tile.number == number:
+                    if tile.suit in normals:
+                        location = normals.index(tile.suit)
+                        location += 1
+                        location %= len(normals)
+                    else:
+                        location = 0
 
-                idx = current_index % 3
-                suit = num_suits[idx]
-                tile = Tile(suit, number)
-                if action_object:
-                    action_object.tile = tile
+                tile = Tile(normals[location], number)
+                action_object.tile = tile
+
             except:
                 pass
                     
