@@ -1,3 +1,4 @@
+import copy
 import random
 import enum
 from suit import Suit
@@ -13,6 +14,12 @@ class Wall():
 
     def __len__(self):
         return len(self.tiles)
+
+    def get_state(self):
+        return copy.copy(self.tiles)
+
+    def set_state(self, state):
+        self.tiles = state
 
     def load_tiles(self):
         self.tiles = []

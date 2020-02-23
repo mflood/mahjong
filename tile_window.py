@@ -2,6 +2,7 @@ from suit import Suit
 from tile import Tile
 import curses
 
+
 def print_tiles(window, tiles, last_tile):
 
     if not last_tile:

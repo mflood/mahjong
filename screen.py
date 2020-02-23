@@ -10,8 +10,12 @@ from suit import Suit
 from discards import Discards
 
 from tile_window import print_tiles
+from actions import WallToDiscardAction
 
 def main(stdscr):
+    
+    action_list = []
+
     # Clear screen
     stdscr.clear()
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
@@ -73,16 +77,17 @@ def main(stdscr):
             # Enter key = execute action
 
             if action_key == '/':
-                if wall.pull(tile):
-                    discards.add(tile)
+                action_object.execute()
+                action_list.append(action_object)
+                action_object = action_object.clone()
+                #if wall.pull(tile):
+                #    discards.add(tile)
                 #else:
                 #    raise Exception("tile {} was not there".format(tile))
 
             if action_key == '.':
                 if wall.pull(tile):
                     hand.add(tile)
-                #else:
-                #    raise Exception("tile {} was not there".format(tile))
 
             if action_key == ',':
                 if hand.pull(tile):
@@ -98,12 +103,35 @@ def main(stdscr):
             print_tiles(hand_window, hand.tiles, hand.last_tile)
         elif k == ".":
             action_key = '.'
+            action_object = None
+            
+        elif k == "u":
+            try:
+                last_action = action_list.pop()
+                last_action.undo()
+                action_object = last_action.clone()
+                wall_window.clear()
+                discard_window.clear()
+                hand_window.clear()
+                print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
+                print_tiles(discard_window, discards.tiles, discards.last_tile)
+                print_tiles(hand_window, hand.tiles, hand.last_tile)
+            except IndexError:
+                pass
+
         elif k == "/":
             action_key = '/'
+            action_object = WallToDiscardAction(wall, discards, tile)
+        elif k == ",":
+            action_key = ','
+            action_object = None
         elif k == "p":
             # discard last tile from hand
             if hand.last_tile:
                 tile = hand.pull(hand.last_tile)
+                if action_object:
+                    action_object.tile = tile
+
                 discards.add(tile)
                 wall_window.clear()
                 discard_window.clear()
@@ -111,8 +139,6 @@ def main(stdscr):
                 print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
                 print_tiles(discard_window, discards.tiles, discards.last_tile)
                 print_tiles(hand_window, hand.tiles, Tile(Suit.NONE))
-        elif k == ",":
-            action_key = ','
         elif k == " ":
             # pull random tile from wall
             tile = wall.draw()
@@ -133,6 +159,8 @@ def main(stdscr):
             idx = current_index % 3
             suit = dragons[idx]
             tile = Tile(suit, None)
+            if action_object:
+                action_object.tile = tile
             last_k = 'd'
         elif k == 'w':
             if last_k != 'w':
@@ -142,10 +170,14 @@ def main(stdscr):
             idx = current_index % 4
             suit = winds[idx]
             tile = Tile(suit, None)
+            if action_object:
+                action_object.tile = tile
             last_k = 'w'
         elif k == 'f':
             if last_k != 'f':
                 tile = Tile(Suit.FLOWER)
+                if action_object:
+                    action_object.tile = tile
                 last_k = 'f'
             
         else:
@@ -160,6 +192,8 @@ def main(stdscr):
                 idx = current_index % 3
                 suit = num_suits[idx]
                 tile = Tile(suit, number)
+                if action_object:
+                    action_object.tile = tile
             except:
                 pass
                     
