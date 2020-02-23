@@ -16,6 +16,7 @@ from actions import HandToDiscardAction
 from actions import RandomFromWallToHandAction
 from actions import HandLastTileToDiscardAction
 from actions import PungAction
+from chow_action import ChowAction
 
 def main(stdscr):
     
@@ -119,6 +120,11 @@ def main(stdscr):
             action_object = WallToDiscardAction(wall, discards, tile)
         elif k == ",":
             action_object = HandToDiscardAction(hand, discards, tile)
+        elif k == "]":
+            if isinstance(action_object, ChowAction):
+                action_object.toggle_mode()
+            else:
+                action_object = ChowAction(wall, hand, discards)
         elif k == "\\":
             if isinstance(action_object, PungAction):
                 action_object.toggle_mode()

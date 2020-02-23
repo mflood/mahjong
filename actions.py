@@ -22,6 +22,7 @@ class PungAction(GameAction):
         self.mode = self.get_modes()[0]
 
         # for undo state
+        self._wall_state = None
         self._hand_state = None
         self._discards_state = None
 
