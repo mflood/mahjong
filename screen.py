@@ -11,7 +11,9 @@ from discards import Discards
 
 from tile_window import print_tiles
 from actions import WallToDiscardAction
+from actions import WallToHandAction
 from actions import HandToDiscardAction
+from actions import RandomFromWallToHandAction
 
 def main(stdscr):
     
@@ -59,7 +61,7 @@ def main(stdscr):
     number = None
     current_suit = None
     current_number = None
-    tile = None
+    tile = Tile(Suit.BAM, 1)
     discard_from = 'wall'
     actions = {
             '/': "discard from wall",
@@ -67,9 +69,21 @@ def main(stdscr):
             ',': "discard from hand",
     }
     action_key = ','
+
+    action_object = WallToDiscardAction(wall, discards, tile)
+
     while True:
         
+        command_window.clear()
+        command_window.addstr(1, 0, "{}".format(action_object))
+        command_window.refresh()
+        wall_window.refresh()
+        hand_window.refresh()
+        discard_window.refresh()
+
         k = command_window.getkey()
+        command_window.addstr(0, 0, "key: {}".format(ord(k)))
+        command_window.refresh()
         
         if k == 'KEY_RESIZE':
             continue
@@ -77,39 +91,30 @@ def main(stdscr):
         if ord(k) == 10:
             # Enter key = execute action
 
-            if action_key == '/':
-                action_object.execute()
-                action_list.append(action_object)
-                action_object = action_object.clone()
-
-            if action_key == '.':
-                if wall.pull(tile):
-                    hand.add(tile)
-
-            if action_key == ',':
-                action_object.execute()
-                action_list.append(action_object)
-                action_object = action_object.clone()
+            action_object.execute()
+            action_list.append(action_object)
+            action_object = action_object.clone()
 
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
-        elif k == ".":
-            action_key = '.'
-            action_object = None
-            
+
         elif k == "u":
             try:
                 last_action = action_list.pop()
                 last_action.undo()
-                action_object = last_action.clone()
+                replace_action_object = last_action.clone()
+                if replace_action_object:
+                    action_object = replace_action_object
 
                 print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
                 print_tiles(discard_window, discards.tiles, discards.last_tile)
                 print_tiles(hand_window, hand.tiles, hand.last_tile)
             except IndexError:
                 pass
-
+        elif k == ".":
+            action_key = '/'
+            action_object = WallToHandAction(wall, hand, tile)
         elif k == "/":
             action_key = '/'
             action_object = WallToDiscardAction(wall, discards, tile)
@@ -132,12 +137,10 @@ def main(stdscr):
                 print_tiles(hand_window, hand.tiles, Tile(Suit.NONE))
         elif k == " ":
             # pull random tile from wall
-            tile = wall.draw()
-            hand.add(tile)
+            pull_action = RandomFromWallToHandAction(wall, hand)
+            pull_action.execute()
+            action_list.append(pull_action)
 
-            wall_window.clear()
-            discard_window.clear()
-            hand_window.clear()
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
@@ -189,13 +192,6 @@ def main(stdscr):
             except:
                 pass
                     
-        command_window.clear()
-        command_window.addstr(0, 0, "key: {}".format(ord(k)))
-        command_window.addstr(1, 0, "{}: {}".format(actions[action_key], tile))
-        command_window.refresh()
-        wall_window.refresh()
-        hand_window.refresh()
-        discard_window.refresh()
 
         #a = stdscr.getch()
 #        curses.echo()
