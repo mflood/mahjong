@@ -14,6 +14,7 @@ from actions import WallToDiscardAction
 from actions import WallToHandAction
 from actions import HandToDiscardAction
 from actions import RandomFromWallToHandAction
+from actions import HandLastTileToDiscardAction
 
 def main(stdscr):
     
@@ -122,19 +123,17 @@ def main(stdscr):
             action_key = ','
             action_object = HandToDiscardAction(hand, discards, tile)
         elif k == "p":
+            # pass
             # discard last tile from hand
             if hand.last_tile:
-                tile = hand.pull(hand.last_tile)
-                if action_object:
-                    action_object.tile = tile
+                discard_last_action = HandLastTileToDiscardAction(hand, discards)
+                discard_last_action.execute()
+                action_list.append(discard_last_action)
 
-                discards.add(tile)
-                wall_window.clear()
-                discard_window.clear()
-                hand_window.clear()
                 print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
                 print_tiles(discard_window, discards.tiles, discards.last_tile)
-                print_tiles(hand_window, hand.tiles, Tile(Suit.NONE))
+                print_tiles(hand_window, hand.tiles, hand.last_tile)
+
         elif k == " ":
             # pull random tile from wall
             pull_action = RandomFromWallToHandAction(wall, hand)

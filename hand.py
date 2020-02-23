@@ -34,6 +34,9 @@ class Hand():
                 new_tiles.append(t)
         self.tiles = new_tiles
         self.tiles.sort()
-        self.last_tile = None 
+        if self.tiles:
+            self.last_tile = self.tiles[0]
+        else:
+            self.last_tile = None 
         return discarded
 
