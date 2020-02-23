@@ -1,10 +1,87 @@
+import copy
 
 
 
+class ActionException(Exception):
+    pass
 
 class GameAction():
     pass
 
+class PungAction(GameAction):
+
+    def __init__(self, wall, hand, discards):
+        self.hand = hand
+        self.wall = wall
+        self.discards = discards
+
+        # 0 = pung other
+        # 1 = kong self
+        # 2 = pung self
+        # 3 = kong self
+        self.mode = 0
+
+        # for undo state
+        self._hand_state = None
+        self._discards_state = None
+
+    def __str__(self):
+
+        last_tile = self.discards.last_tile
+        if self.mode == 0:
+            return "Create pung from discard (other player): {}".format(last_tile)
+        elif self.mode == 1:
+            return "Create kong from discard (other player): {}".format(last_tile)
+        elif self.mode == 2:
+            return "Create pung from discard (my hand): {}".format(last_tile)
+        elif self.mode == 3:
+            return "Create pung from discard (my hand): {}".format(last_tile)
+        else:
+            return "Cannot pung / kong"
+
+    def toggle_mode(self):
+        self.mode += 1
+        self.mode %= 4
+        
+    def execute(self):
+
+        self._hand_state = self.hand.get_state()
+        self._discards_state = self.discards.get_state()
+        self._wall_state = self.wall.get_state()
+
+        if self.mode in [0, 1]:
+            source = self.wall
+        else:
+            source = self.hand
+
+        if self.mode in [0, 2]:
+            # pung
+            count = 3
+        else:
+            # kong
+            count = 4
+
+        last_tile = self.discards.last_tile
+
+        if not last_tile:
+            raise ActionException("discards has no last tile")
+
+        if last_tile:
+            for x in range(count - 1):
+                t = source.pull(last_tile)
+                if t:
+                    self.discards.add(t)
+                    self.discards.last_tile = None
+                else:
+                    raise ActionException("could not pull {} from source {}".format(last_tile, type(source)))
+
+    def undo(self):
+        self.hand.set_state(self._hand_state)
+        self.discards.set_state(self._discards_state)
+        self.wall.set_state(self._wall_state)
+
+    def clone(self):
+        None
 
 class HandLastTileToDiscardAction(GameAction):
 
@@ -65,7 +142,7 @@ class HandToDiscardAction(GameAction):
     def clone(self):
         return HandToDiscardAction(hand=self.hand,
                                    discards=self.discards,
-                                   tile=self.tile)
+                                   tile=copy.copy(self.tile))
 
 class RandomFromWallToHandAction(GameAction):
 

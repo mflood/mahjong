@@ -15,6 +15,7 @@ from actions import WallToHandAction
 from actions import HandToDiscardAction
 from actions import RandomFromWallToHandAction
 from actions import HandLastTileToDiscardAction
+from actions import PungAction
 
 def main(stdscr):
     
@@ -55,7 +56,8 @@ def main(stdscr):
 
     current_index = 0
     tile = Tile(Suit.BAM, 1)
-
+    k = None
+    last_error = ""
 
     action_object = WallToDiscardAction(wall, discards, tile)
 
@@ -63,14 +65,24 @@ def main(stdscr):
         
         command_window.clear()
         command_window.addstr(1, 0, "{}".format(action_object))
+        if k:
+            if k == 'KEY_RESIZE':
+                key = k 
+                the_ord = ""
+            elif ord(k) == 10:
+                key = "CTRL"
+                the_ord = ord(k)
+            else:
+                key = k
+                the_ord = ord(k)
+            command_window.addstr(0, 0, "key: {} ord: {} {}".format(key, the_ord, last_error))
+
         command_window.refresh()
         wall_window.refresh()
         hand_window.refresh()
         discard_window.refresh()
 
         k = command_window.getkey()
-        command_window.addstr(0, 0, "key: {}".format(ord(k)))
-        command_window.refresh()
         
         if k == 'KEY_RESIZE':
             continue
@@ -81,6 +93,8 @@ def main(stdscr):
             action_object.execute()
             action_list.append(action_object)
             action_object = action_object.clone()
+            if not action_object:
+                action_object = WallToDiscardAction(wall, discards, tile) 
 
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
@@ -105,6 +119,11 @@ def main(stdscr):
             action_object = WallToDiscardAction(wall, discards, tile)
         elif k == ",":
             action_object = HandToDiscardAction(hand, discards, tile)
+        elif k == "\\":
+            if isinstance(action_object, PungAction):
+                action_object.toggle_mode()
+            else:
+                action_object = PungAction(wall, hand, discards)
         elif k == "p":
             # pass
             # discard last tile from hand
