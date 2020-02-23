@@ -9,7 +9,10 @@ from tile import Tile
 from suit import Suit
 from discards import Discards
 
-def print_tiles(window, tiles):
+def print_tiles(window, tiles, last_tile):
+
+    if not last_tile:
+        last_tile = Tile(Suit.NONE)
 
     counts = {}
     
@@ -24,6 +27,7 @@ def print_tiles(window, tiles):
         Suit.WEST_WIND: "W",
         Suit.NORTH_WIND: "N",
         Suit.SOUTH_WIND: "S",
+        Suit.FLOWER: "*",
     }
     
     for word in [Suit.BAM, Suit.CRAK, Suit.DOT]: 
@@ -49,38 +53,78 @@ def print_tiles(window, tiles):
         else:
             counts[tile.suit] += 1
 
-
+    # Print row titles
     for offset, word in enumerate([Suit.BAM, Suit.CRAK, Suit.DOT]):
         for idx, t in enumerate(range(4)):
             window.addstr(offset * 5 + idx, 0, words[word], curses.color_pair(1))
     
-    for z in range(3):
-        for y in range(4):
-            for x in range(1, 10):
-                window.addstr(z * 5 + y, 6 + x * 2, ".")
-                window.refresh()
-
-    # Print Empty Dragons
-    for z in range(3):
-        for y in range(4):
-            window.addstr(z * 5 + y, 6 + 9 * 2 + 3, ".")
-            window.refresh()
-
+    # Print regulars
     for z, suit in enumerate([Suit.BAM, Suit.CRAK, Suit.DOT]):
         for x in range(1, 10):
             amount = counts[suit][x]
-            for y in range(amount):
-                window.addstr(z * 5 + y, 6 + x * 2, str(x))
-                window.refresh()
-                #time.sleep(0.01)
+            for y in range(4):
+                color = 0
+                if y < amount:
+                    char = str(x)
+                    if suit == last_tile.suit and x == last_tile.number:
+                        color = curses.color_pair(1)
+                else:
+                    char = "."
+                window.addstr(z * 5 + y, 6 + x * 2, char, color)
     
     # Print the Dragons
     for z, suit in enumerate([Suit.GREEN_DRAGON, Suit.WHITE_DRAGON, Suit.RED_DRAGON]):
         amount = counts[suit]
-        for y in range(amount):
-            window.addstr(z * 5 + y, 6 + 9 * 2 + 3, words[suit])
-            window.refresh()
-            #time.sleep(0.01)
+        for y in range(4):
+            color = 0
+            if y < amount:
+                char = words[suit]
+                if suit == last_tile.suit:
+                    color = curses.color_pair(1)
+            else:
+                char = "."
+
+            window.addstr(z * 5 + y, 6 + 9 * 2 + 3, char, color)
+
+    # Print the NORTH/EAST WIND
+    for z, suit in enumerate([Suit.NORTH_WIND, Suit.EAST_WIND]):
+        amount = counts[suit]
+        for y in range(4):
+            color = 0
+            if y < amount:
+                char = words[suit]
+                if suit == last_tile.suit:
+                    color = curses.color_pair(1)
+            else:
+                char = "."
+
+            window.addstr(z * 5 + y, 6 + 9 * 2 + 3 + 4, char, color)
+
+    # Print the SOUTH/WEST WIND
+    for z, suit in enumerate([Suit.SOUTH_WIND, Suit.WEST_WIND]):
+        amount = counts[suit]
+        for y in range(4):
+            color = 0
+            if y < amount:
+                char = words[suit]
+                if suit == last_tile.suit:
+                    color = curses.color_pair(1)
+            else:
+                char = "."
+
+            window.addstr(z * 5 + y, 6 + 9 * 2 + 3 + 4 + 2, char, color)
+
+    # Print the Flowers
+    amount = counts[Suit.FLOWER]
+    for y in range(8):
+        if y < amount:
+            char = '*'
+        else:
+            char = "."
+
+        window.addstr(2 * 5 + 5, y * 2 + 8, char)
+
+    window.refresh()
 
 def main(stdscr):
     # Clear screen
@@ -112,11 +156,11 @@ def main(stdscr):
     hand_window = curses.newwin(height, width, begin_y + 20, begin_x)
     command_window = curses.newwin(3, 100, 2, 2)
 
-    print_tiles(wall_window, wall.tiles)
-    print_tiles(discard_window, discards.tiles)
-    print_tiles(hand_window, hand.tiles)
+    print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
+    print_tiles(discard_window, discards.tiles, discards.last_tile)
+    print_tiles(hand_window, hand.tiles, hand.last_tile)
 
-    dragons = [Suit.RED_DRAGON, Suit.GREEN_DRAGON, Suit.WHITE_DRAGON]
+    dragons = [Suit.GREEN_DRAGON, Suit.WHITE_DRAGON, Suit.RED_DRAGON]
     num_suits = [Suit.BAM, Suit.CRAK, Suit.DOT]
     winds = [Suit.NORTH_WIND, Suit.SOUTH_WIND, Suit.EAST_WIND, Suit.WEST_WIND]
     last_k = None
@@ -141,6 +185,8 @@ def main(stdscr):
             continue
 
         if ord(k) == 10:
+            # Enter key = execute action
+
             if action_key == '/':
                 if wall.pull(tile):
                     discards.add(tile)
@@ -162,15 +208,38 @@ def main(stdscr):
             wall_window.clear()
             discard_window.clear()
             hand_window.clear()
-            print_tiles(wall_window, wall.tiles)
-            print_tiles(discard_window, discards.tiles)
-            print_tiles(hand_window, hand.tiles)
+            print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
+            print_tiles(discard_window, discards.tiles, discards.last_tile)
+            print_tiles(hand_window, hand.tiles, hand.last_tile)
         elif k == ".":
             action_key = '.'
         elif k == "/":
             action_key = '/'
+        elif k == "p":
+            # discard last tile from hand
+            if hand.last_tile:
+                tile = hand.pull(hand.last_tile)
+                discards.add(tile)
+                wall_window.clear()
+                discard_window.clear()
+                hand_window.clear()
+                print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
+                print_tiles(discard_window, discards.tiles, discards.last_tile)
+                print_tiles(hand_window, hand.tiles, Tile(Suit.NONE))
         elif k == ",":
             action_key = ','
+        elif k == " ":
+            # pull random tile from wall
+            tile = wall.draw()
+            hand.add(tile)
+
+            wall_window.clear()
+            discard_window.clear()
+            hand_window.clear()
+            print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
+            print_tiles(discard_window, discards.tiles, discards.last_tile)
+            print_tiles(hand_window, hand.tiles, hand.last_tile)
+
         elif k == 'd':
             if last_k != 'd':
                 current_index = 0

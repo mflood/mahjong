@@ -17,7 +17,6 @@ class Hand():
         self.last_tile = tile 
 
     def pull(self, tile):
-        
         discarded = None
         new_tiles = []
         for t in self.tiles:
@@ -27,5 +26,6 @@ class Hand():
                 new_tiles.append(t)
         self.tiles = new_tiles
         self.tiles.sort()
+        self.last_tile = None 
         return discarded
 

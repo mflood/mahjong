@@ -17,3 +17,5 @@ class Suit(IntEnum):
 
     FLOWER = 11
 
+    NONE = 12
+
