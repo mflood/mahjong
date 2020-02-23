@@ -4,6 +4,8 @@ import enum
 from suit import Suit
 from tile import Tile
 
+random.seed(45)
+
 class Wall():
 
     def __init__(self):
