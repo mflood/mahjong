@@ -25,8 +25,9 @@ def print_hand_block(window, hand, wall):
     else:
         window.addstr(3, 0, "NOT MAHJONG")
 
-    mahjong_tiles = hand.tiles_needed(wall)
-    window.addstr(3, 0, str(mahjong_tiles))
+    if hand.hand_size() > 11:
+        mahjong_tiles = hand.tiles_needed(wall)
+        window.addstr(4, 0, str(mahjong_tiles))
 
     window.refresh()
 

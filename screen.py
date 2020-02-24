@@ -88,7 +88,10 @@ def main(stdscr):
         hand_window.refresh()
         discard_window.refresh()
 
-        k = command_window.getkey()
+        try:
+            k = command_window.getkey()
+        except KeyboardInterrupt:
+            pass
         
         if k == 'KEY_RESIZE':
             continue

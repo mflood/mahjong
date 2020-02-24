@@ -114,6 +114,10 @@ class Hand():
         return self._is_mahjong(self.tiles) 
 
     def _is_mahjong(self, hand_tiles):
+        
+#        if len(hand_tiles) < 14:
+#            return False
+
         pair = None
         sets = []
         for suit in [
