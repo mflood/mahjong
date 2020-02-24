@@ -1,3 +1,4 @@
+import sys
 import copy
 from suit import Suit
 from itertools import permutations
@@ -58,7 +59,7 @@ class Hand():
                 t = Tile(suit, x)
                 valid_sets.append([t, t])
         else:
-            for x in range(1, 7):
+            for x in range(1, 8):
                 t1 = Tile(suit, x)
                 t2 = Tile(suit, x+1)
                 t3 = Tile(suit, x+2)
@@ -78,7 +79,7 @@ class Hand():
                     break 
 
             if not error:
-                # print("{}potential {}".format(padding, str(test)))
+                # print("{}potential set: {}".format(padding, str(test)))
 
                 if len(copy_list) == 0:
                     if len(test) == 2:
@@ -143,11 +144,14 @@ class Hand():
             tiles = self.get_tiles_of_suit(suit)
             if len(tiles) == 0:
                 continue
+
             if len(tiles) % 3 == 0 or len(tiles) % 3 == 2:
                 new_sets, new_pair = self.get_sets_pair(tiles)
                 if new_pair:
                     if pair:
+                        # print("False because there is already a designated pair from another suit")
                         return False
+                    # print("Setting pair to %s" % new_pair)
                     pair = new_pair
 
                 if new_sets:
