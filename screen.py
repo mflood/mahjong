@@ -133,6 +133,10 @@ def main(stdscr):
             action_object = QuitAction()
         elif k == ",":
             action_object = HandToDiscardAction(hand, discards, tile)
+            print_tiles(hand_window, hand.tiles, hand.last_tile)
+        elif k == "C":
+            action_object.toggle()
+            print_tiles(hand_window, hand.tiles, hand.last_tile)
         elif k == "]":
             if isinstance(action_object, ChowAction):
                 action_object.toggle_mode()

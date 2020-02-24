@@ -41,7 +41,7 @@ class HandToDiscardAction(GameAction):
     def __init__(self, hand, discards, tile):
         self.hand = hand
         self.discards = discards
-        self.tile = tile
+        self.tile = hand.last_tile
 
         # for undo state
         self._hand_state = None
@@ -57,6 +57,20 @@ class HandToDiscardAction(GameAction):
 
         if self.hand.pull(self.tile):
             self.discards.add(self.tile)
+
+    def toggle(self):
+        tiles = copy.copy(self.hand.tiles)
+        tiles = list(set(tiles))
+        tiles.sort()
+        idx = 0
+        if self.hand.last_tile:
+            idx = tiles.index(self.hand.last_tile)
+            idx += 1
+            idx %= len(tiles)
+
+        new_last_tile = tiles[idx]
+        self.hand.last_tile = new_last_tile
+        self.tile = new_last_tile
 
     def undo(self):
         self.hand.set_state(self._hand_state)
