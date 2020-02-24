@@ -9,6 +9,9 @@ class Tile():
     def __repr__(self):
         return "Tile({}, {})".format(self.suit, self.number)
 
+    def __hash__(self):
+        return hash(str(self))
+
     def long_name(self):
 
         if self.suit == Suit.FLOWER:

@@ -3,7 +3,7 @@ from tile import Tile
 import curses
 
 
-def print_hand_block(window, hand):
+def print_hand_block(window, hand, wall):
 
     window.clear() 
 
@@ -25,6 +25,8 @@ def print_hand_block(window, hand):
     else:
         window.addstr(3, 0, "NOT MAHJONG")
 
+    mahjong_tiles = hand.tiles_needed(wall)
+    window.addstr(3, 0, str(mahjong_tiles))
 
     window.refresh()
 

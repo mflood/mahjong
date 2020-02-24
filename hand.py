@@ -2,6 +2,7 @@ import sys
 import copy
 from suit import Suit
 from itertools import permutations
+from itertools import combinations
 from tile import Tile
 
 class Hand():
@@ -26,13 +27,16 @@ class Hand():
         return "{}\n{}\n{}".format(n, h, f)
 
 
-    def get_tiles_of_suit(self, suit):
-        tiles = []
-        for t in self.tiles:
+    def _get_tiles_of_suit(self, suit, tiles):
+        return_tiles = []
+        for t in tiles:
             if t.suit == suit:
-                tiles.append(t)
-        return tiles
+                return_tiles.append(t)
+        return return_tiles
+        
 
+    def get_tiles_of_suit(self, suit):
+        return self._get_tiles_of_suit(suit, self.tiles)
 
     def is_valid_pair(self, tile_list):
         return tile_list[0] == tile_list[1]
@@ -107,7 +111,9 @@ class Hand():
         return None, None
 
     def is_mahjong(self):
-        
+        return self._is_mahjong(self.tiles) 
+
+    def _is_mahjong(self, hand_tiles):
         pair = None
         sets = []
         for suit in [
@@ -119,7 +125,7 @@ class Hand():
             Suit.NORTH_WIND,
             Suit.SOUTH_WIND,
         ]:
-            tiles = self.get_tiles_of_suit(suit)
+            tiles = self._get_tiles_of_suit(suit, hand_tiles)
             if not tiles:
                 continue
 
@@ -141,7 +147,7 @@ class Hand():
             Suit.CRAK,
             Suit.DOT
         ]:
-            tiles = self.get_tiles_of_suit(suit)
+            tiles = self._get_tiles_of_suit(suit, hand_tiles)
             if len(tiles) == 0:
                 continue
 
@@ -165,6 +171,33 @@ class Hand():
 
         return False
 
+
+    def tiles_needed(self, wall):
+        if len(self.tiles) < 14:
+            return self._tiles_needed(self.tiles, wall)
+        return []
+
+    def _tiles_needed(self, hand_tiles, wall):
+
+        return_tiles = []
+        wall_tile_size = 14 - len(hand_tiles)
+        wall_perms = combinations(wall.tiles, wall_tile_size)
+
+        wall_perms_as_list = [list(x) for x in wall_perms]
+        
+        unique_wall_perms = set(map(tuple, wall_perms_as_list))
+
+        #print("candidate length: {}".format(len(unique_wall_perms)))
+
+        for item in unique_wall_perms:
+            #print("Examining perm item: {}".format(str(item)))
+            new_hand = hand_tiles + list(item)
+            if self._is_mahjong(new_hand):
+                return_tiles.append(item)
+
+        #print("Combinations: {}".format("\n-".join([str( " ".join([str(a) for a in x ])    ) for x in wall_perms])))
+        return return_tiles
+        
 
     def hand_size(self):
         """
@@ -228,9 +261,17 @@ if __name__ == "__main__":
         wall.load_tiles()
         wall.shuffle()
     
-        for x in range(14):
+        for x in range(6):
             t = wall.draw()
             hand.add(t)
+            t = wall.pull(t)
+            hand.add(t)
+
+        print("hand: {}".format(str(hand)))
+        solutions = hand.tiles_needed(wall)
+        if solutions:
+            for x in solutions:
+                print(" solved with {}".format([str(a) for a in x]))
 
         is_m = hand.is_mahjong()
         if is_m:

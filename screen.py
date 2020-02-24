@@ -57,7 +57,7 @@ def main(stdscr):
     print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
     print_tiles(discard_window, discards.tiles, discards.last_tile)
     print_tiles(hand_window, hand.tiles, hand.last_tile)
-    print_hand_block(hand_block_window, hand)
+    print_hand_block(hand_block_window, hand, wall)
 
 
     current_index = 0
@@ -105,7 +105,7 @@ def main(stdscr):
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
-            print_hand_block(hand_block_window, hand)
+            print_hand_block(hand_block_window, hand, wall)
 
         elif k == "u":
             try:
@@ -118,7 +118,7 @@ def main(stdscr):
                 print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
                 print_tiles(discard_window, discards.tiles, discards.last_tile)
                 print_tiles(hand_window, hand.tiles, hand.last_tile)
-                print_hand_block(hand_block_window, hand)
+                print_hand_block(hand_block_window, hand, wall)
             except IndexError:
                 pass
         elif k == ".":
@@ -148,7 +148,7 @@ def main(stdscr):
                 print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
                 print_tiles(discard_window, discards.tiles, discards.last_tile)
                 print_tiles(hand_window, hand.tiles, hand.last_tile)
-                print_hand_block(hand_block_window, hand)
+                print_hand_block(hand_block_window, hand, wall)
 
         elif k == " ":
             # pull random tile from wall
@@ -159,7 +159,7 @@ def main(stdscr):
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
-            print_hand_block(hand_block_window, hand)
+            print_hand_block(hand_block_window, hand, wall)
 
         elif k == 'd':
             # toggle dragon
