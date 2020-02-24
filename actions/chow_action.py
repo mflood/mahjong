@@ -1,6 +1,7 @@
 
 from actions import GameAction
 from tile import Tile
+from suit import Suit
 
 class ChowAction(GameAction):
 
@@ -68,7 +69,7 @@ class ChowAction(GameAction):
             )
 
 
-    def find_neighbor(self, tile_list, tile, distance):
+    def _find_neighbor(self, tile_list, tile, distance):
         """
             return true if neighbor exists
         """
@@ -93,18 +94,21 @@ class ChowAction(GameAction):
         if not self.discards.last_tile:
             return [6]
 
+        if self.discards.last_tile.suit not in [Suit.BAM, Suit.CRAK, Suit.DOT]:
+            return [6]
+
         modes = []
 
         wall_num_above = 0
         wall_num_below = 0
 
-        if self.find_neighbor(self.wall.tiles, self.discards.last_tile, 1):
+        if self._find_neighbor(self.wall.tiles, self.discards.last_tile, 1):
             wall_num_above = 1
-            if self.find_neighbor(self.wall.tiles, self.discards.last_tile, 2):
+            if self._find_neighbor(self.wall.tiles, self.discards.last_tile, 2):
                 wall_num_above = 2
-        if self.find_neighbor(self.wall.tiles, self.discards.last_tile, -1):
+        if self._find_neighbor(self.wall.tiles, self.discards.last_tile, -1):
             wall_num_below = 1
-            if self.find_neighbor(self.wall.tiles, self.discards.last_tile, -2):
+            if self._find_neighbor(self.wall.tiles, self.discards.last_tile, -2):
                 wall_num_below = 2
 
         if wall_num_above == 2:
@@ -117,13 +121,13 @@ class ChowAction(GameAction):
         player_num_above = 0
         player_num_below = 0
 
-        if self.find_neighbor(self.hand.tiles, self.discards.last_tile, 1):
+        if self._find_neighbor(self.hand.tiles, self.discards.last_tile, 1):
             player_num_above = 1
-            if self.find_neighbor(self.hand.tiles, self.discards.last_tile, 2):
+            if self._find_neighbor(self.hand.tiles, self.discards.last_tile, 2):
                 player_num_above = 2
-        if self.find_neighbor(self.hand.tiles, self.discards.last_tile, -1):
+        if self._find_neighbor(self.hand.tiles, self.discards.last_tile, -1):
             player_num_below = 1
-            if self.find_neighbor(self.hand.tiles, self.discards.last_tile, -2):
+            if self._find_neighbor(self.hand.tiles, self.discards.last_tile, -2):
                 player_num_below = 2
 
         if player_num_above == 2:

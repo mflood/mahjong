@@ -16,8 +16,9 @@ from actions import WallToHandAction
 from actions import HandToDiscardAction
 from actions import RandomFromWallToHandAction
 from actions import HandLastTileToDiscardAction
-from actions import PungAction
-from chow_action import ChowAction
+from actions.chow_action import ChowAction
+from actions.pung_action import PungAction
+from actions.quit_action import QuitAction
 
 def main(stdscr):
     
@@ -128,6 +129,8 @@ def main(stdscr):
             action_object = WallToHandAction(wall, hand, tile)
         elif k == "/":
             action_object = WallToDiscardAction(wall, discards, tile)
+        elif k == "q":
+            action_object = QuitAction()
         elif k == ",":
             action_object = HandToDiscardAction(hand, discards, tile)
         elif k == "]":
