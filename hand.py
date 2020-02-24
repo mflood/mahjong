@@ -178,6 +178,11 @@ class Hand():
         return []
 
     def _tiles_needed(self, hand_tiles, wall):
+        
+        # a hand is not solvable if it has more than 5 suits
+        unique_suits = list(set([tile.suit for tile in hand_tiles]))
+        if len(unique_suits) > 5:
+            return []
 
         return_tiles = []
         wall_tile_size = 14 - len(hand_tiles)
@@ -261,10 +266,11 @@ if __name__ == "__main__":
         wall.load_tiles()
         wall.shuffle()
     
-        for x in range(6):
+        for x in range(8):
+            wall.pull(Tile(Suit.FLOWER))
+
+        for x in range(11):
             t = wall.draw()
-            hand.add(t)
-            t = wall.pull(t)
             hand.add(t)
 
         print("hand: {}".format(str(hand)))
