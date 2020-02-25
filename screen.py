@@ -11,18 +11,18 @@ from discards import Discards
 
 from tile_window import print_tiles
 from tile_window import print_hand_block
-from actions import WallToDiscardAction
-from actions import WallToHandAction
-from actions import HandToDiscardAction
-from actions import RandomFromWallToHandAction
-from actions import HandLastTileToDiscardAction
+from actions.wall_to_discard_action import WallToDiscardAction
+from actions.wall_to_hand_action import WallToHandAction
+from actions.hand_to_discard_action import HandToDiscardAction
+from actions.random_from_wall_to_hand_action import RandomFromWallToHandAction
+from actions.hand_last_tile_to_discard_action import HandLastTileToDiscardAction
 from actions.chow_action import ChowAction
 from actions.pung_action import PungAction
 from actions.quit_action import QuitAction
 
 def main(stdscr):
     
-    action_list = []
+    action_history = []
 
     # Clear screen
     stdscr.clear()
@@ -101,7 +101,7 @@ def main(stdscr):
             # Enter key = execute action
 
             action_object.execute()
-            action_list.append(action_object)
+            action_history.append(action_object)
             action_object = action_object.clone()
             if not action_object:
                 action_object = WallToDiscardAction(wall, discards, tile) 
@@ -113,7 +113,7 @@ def main(stdscr):
 
         elif k == "u":
             try:
-                last_action = action_list.pop()
+                last_action = action_history.pop()
                 last_action.undo()
                 replace_action_object = last_action.clone()
                 if replace_action_object:
@@ -137,6 +137,12 @@ def main(stdscr):
         elif k == "C":
             action_object.toggle()
             print_tiles(hand_window, hand.tiles, hand.last_tile)
+        elif k == "D":
+            action_object.toggle(reverse=True)
+            print_tiles(hand_window, hand.tiles, hand.last_tile)
+        elif k == "\t":
+            action_object.toggle(tab=True)
+            print_tiles(hand_window, hand.tiles, hand.last_tile)
         elif k == "]":
             if isinstance(action_object, ChowAction):
                 action_object.toggle_mode()
@@ -153,7 +159,7 @@ def main(stdscr):
             if hand.last_tile:
                 discard_last_action = HandLastTileToDiscardAction(hand, discards)
                 discard_last_action.execute()
-                action_list.append(discard_last_action)
+                action_history.append(discard_last_action)
 
                 print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
                 print_tiles(discard_window, discards.tiles, discards.last_tile)
@@ -164,7 +170,7 @@ def main(stdscr):
             # pull random tile from wall
             pull_action = RandomFromWallToHandAction(wall, hand)
             pull_action.execute()
-            action_list.append(pull_action)
+            action_history.append(pull_action)
 
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
