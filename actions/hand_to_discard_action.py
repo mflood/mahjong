@@ -3,10 +3,12 @@ import copy
 
 class HandToDiscardAction(GameAction):
 
-    def __init__(self, hand, discards, tile):
+    def __init__(self, hand, discards, tile_chooser):
+        super().__init__()
         self.hand = hand
         self.discards = discards
         self.tile = hand.last_tile
+        self.tile_chooser = tile_chooser
 
         # for undo state
         self._hand_state = None

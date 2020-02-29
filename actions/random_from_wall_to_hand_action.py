@@ -3,6 +3,7 @@ from actions import GameAction
 class RandomFromWallToHandAction(GameAction):
 
     def __init__(self, wall, hand):
+        super().__init__()
         self.wall = wall
         self.hand = hand
 

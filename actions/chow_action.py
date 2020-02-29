@@ -7,6 +7,8 @@ from suit import Suit
 class ChowAction(GameAction):
 
     def __init__(self, wall, hand, discards):
+        super().__init__()
+
         self.hand = hand
         self.wall = wall
         self.discards = discards
@@ -145,7 +147,7 @@ class ChowAction(GameAction):
         return modes
 
 
-    def toggle_mode(self):
+    def toggle(self):
         modes = self.get_modes()
 
         if self.mode in modes:

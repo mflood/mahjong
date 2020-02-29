@@ -3,6 +3,7 @@ from actions import GameAction
 class HandLastTileToDiscardAction(GameAction):
 
     def __init__(self, hand, discards):
+        super().__init__()
         self.hand = hand
         self.discards = discards
 

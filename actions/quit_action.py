@@ -4,6 +4,7 @@ import sys
 class QuitAction(GameAction):
 
     def __init__(self):
+        super().__init__()
         pass
 
     def __str__(self):
