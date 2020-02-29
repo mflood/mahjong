@@ -11,6 +11,7 @@ from discards import Discards
 
 from tile_window import print_tiles
 from tile_window import print_hand_block
+from tile_chooser import TileChooser
 from actions.wall_to_discard_action import WallToDiscardAction
 from actions.wall_to_hand_action import WallToHandAction
 from actions.hand_to_discard_action import HandToDiscardAction
@@ -22,6 +23,9 @@ from actions.quit_action import QuitAction
 
 def main(stdscr):
     
+    tile_chooser = TileChooser()
+    alt_tile_chooser = TileChooser()
+
     action_history = []
 
     # Clear screen
@@ -66,7 +70,7 @@ def main(stdscr):
     k = None
     last_error = ""
 
-    action_object = WallToDiscardAction(wall, discards, tile)
+    action_object = WallToDiscardAction(wall, discards, tile_chooser)
 
     while True:
         
@@ -104,7 +108,7 @@ def main(stdscr):
             action_history.append(action_object)
             action_object = action_object.clone()
             if not action_object:
-                action_object = WallToDiscardAction(wall, discards, tile) 
+                action_object = WallToDiscardAction(wall, discards, tile_chooser) 
 
             print_tiles(wall_window, wall.tiles, Tile(Suit.NONE))
             print_tiles(discard_window, discards.tiles, discards.last_tile)
@@ -126,33 +130,27 @@ def main(stdscr):
             except IndexError:
                 pass
         elif k == ".":
-            action_object = WallToHandAction(wall, hand, tile)
+            action_object = WallToHandAction(wall, hand, tile_chooser)
         elif k == "/":
-            action_object = WallToDiscardAction(wall, discards, tile)
-        elif k == "q":
+            action_object = WallToDiscardAction(wall, discards, tile_chooser)
+        elif k == "q": # escape
             action_object = QuitAction()
         elif k == ",":
-            action_object = HandToDiscardAction(hand, discards, tile)
+            action_object = HandToDiscardAction(hand, discards, tile_chooser)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
-        elif k == "C":
+        elif k == "C": # right arrow
             action_object.toggle()
             print_tiles(hand_window, hand.tiles, hand.last_tile)
-        elif k == "D":
+        elif k == "D": # left arrow
             action_object.toggle(reverse=True)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
-        elif k == "\t":
+        elif k == "\t": # tab
             action_object.toggle(tab=True)
             print_tiles(hand_window, hand.tiles, hand.last_tile)
         elif k == "]":
-            if isinstance(action_object, ChowAction):
-                action_object.toggle_mode()
-            else:
-                action_object = ChowAction(wall, hand, discards)
+            action_object = ChowAction(wall, hand, discards)
         elif k == "\\":
-            if isinstance(action_object, PungAction):
-                action_object.toggle_mode()
-            else:
-                action_object = PungAction(wall, hand, discards)
+            action_object = PungAction(wall, hand, discards)
         elif k == "p":
             # pass
             # discard last tile from hand
@@ -177,54 +175,7 @@ def main(stdscr):
             print_tiles(hand_window, hand.tiles, hand.last_tile)
             print_hand_block(hand_block_window, hand, wall)
 
-        elif k == 'd':
-            # toggle dragon
-            dragons = [Suit.GREEN_DRAGON, Suit.WHITE_DRAGON, Suit.RED_DRAGON]
-            if tile.suit in dragons:
-                location = dragons.index(tile.suit)
-                location += 1
-                location %= len(dragons)
-            else:
-                location = 0
-            tile = Tile(dragons[location])
-            action_object.tile = tile
-
-        elif k == 'w':
-            # toggle wind
-            winds = [Suit.NORTH_WIND, Suit.SOUTH_WIND, Suit.EAST_WIND, Suit.WEST_WIND]
-            if tile.suit in winds:
-                location = winds.index(tile.suit)
-                location += 1
-                location %= len(winds)
-            else:
-                location = 0
-            tile = Tile(winds[location])
-            action_object.tile = tile
-
-        elif k == 'f':
-            tile = Tile(Suit.FLOWER)
-            action_object.tile = tile
-            
         else:
-            try:
-                normals = [Suit.BAM, Suit.CRAK, Suit.DOT]
-                number = int(k)
-                if number < 1 or number > 9:
-                    continue
-                location = 0
-                if tile.number == number:
-                    if tile.suit in normals:
-                        location = normals.index(tile.suit)
-                        location += 1
-                        location %= len(normals)
-                    else:
-                        location = 0
-
-                tile = Tile(normals[location], number)
-                action_object.tile = tile
-
-            except:
-                pass
-                    
+            action_object.handle_key(k)
 
 wrapper(main)
